@@ -1,0 +1,99 @@
+// @import '../../libs/bootstrap/scss/breadcrumb';
+
+.header {
+    position: relative;
+    height: 12.5vh;
+
+    button {
+        display: block;
+        background-color: #fff;
+        border: none;
+    }
+
+    nav {
+        width: 80% !important;
+        transition: all cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.5s;
+
+        .breadcrumb .dropdown-menu {
+            left: 0 !important;
+        }
+    }
+
+    .controller {
+        .controller__sidebar {
+            position: absolute;
+            z-index: 1;
+            top: 52%;
+            left: 20px;
+            display: block;
+            width: 30px;
+            height: 15px;
+            transform: translateY(-50%);
+            background-color: $custom-lightgray;
+            border: thin solid $custom-black; 
+            border-radius: 5px;
+            transition: all cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.5s;
+            
+            &::before {
+                content: '';
+                position: absolute;
+                width: 40%;
+                height: 100%;
+                right: 0;
+                top: 0;
+                background-color: $custom-black;
+                border-radius: 2px;
+            }
+          }
+
+        $controller-button-size: 40px;
+        .controller__search,
+        .controller__settings {
+            display: inline-block;
+            width: $controller-button-size;
+            height: $controller-button-size;
+            background-color: $custom-white;
+            border-radius: $controller-button-size;
+            box-shadow: 2px 2px 5px 0 $custom-shadowblue;
+            img {
+                width: 80%;
+            }
+        }
+        .controller__search {margin-right: $controller-button-size/2.5;}
+    }
+
+    form.search {
+        margin: 10px 0;
+        #search-input {
+            border: none !important;
+            outline: none !important;
+            border-bottom: thin solid $custom-activeblue !important;
+
+            &::placeholder {
+                font-family: $custom-lato;
+                font-weight: $custom-light;
+                font-size: $custom-base-font-size*1.2;
+                color: $custom-darkblue; 
+            }
+        }
+        input[type="submit"] {
+            color: $custom-darkblue; 
+            border: thin solid $custom-activeblue;
+        }
+    }
+
+    ul.settings {
+        padding: 0;
+        margin: 0;
+        li {
+            list-style-type: none;
+
+            button {
+                margin: 5px;
+                font-size: $custom-base-font-size*1.1;
+                font-weight: $custom-light;
+                color: $custom-darkblue;
+            }
+        }
+    }
+}

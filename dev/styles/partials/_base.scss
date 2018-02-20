@@ -1,0 +1,78 @@
+//SETTINGS
+@import 'custom-variables';
+
+//MAIN
+h1 {
+    font-size: $custom-base-font-size*1.8 !important;
+    
+}
+
+.app {
+    position: relative;
+    height: 100vh;
+    overflow: hidden;
+
+    background-color: $custom-lightgray;
+}
+
+.breadcrumb {
+    margin: 0 !important;
+    padding: 0 !important;
+    background-color: transparent !important;
+
+    .active, button {
+        font-weight: $custom-regular !important;
+        color: $custom-darkblue !important;
+    }
+}
+
+.dropdown-menu {
+    min-width: auto !important;
+    border: none !important;
+    border-radius: 15px !important;
+    box-shadow: 3px 3px 5px 0 $custom-shadowblue;
+    
+    .dropdown-item {
+        padding: 10px 20px !important;
+        font-weight: $custom-light !important;
+        color: $custom-darkblue !important;
+        text-align: center;
+
+        &.active {
+            background-color: transparent !important;
+            font-weight: $custom-medium !important;
+        }
+    }
+}
+
+.dropdown-divider {
+    width: 80%;
+    margin: 0 auto !important;
+    border-top-color: $custom-darkblue !important;
+}
+
+.popover {
+    margin-top: $custom-base-font-size !important;
+}
+
+//CUSTOM COMPONENTS
+@import 'menu';
+@import 'main';
+
+//UTILITIES
+@import '../../libs/bootstrap/scss/functions';
+@import '../../libs/bootstrap/scss/mixins';
+@import '../../libs/bootstrap/scss/variables';
+@import '../../libs/bootstrap/scss/utilities/visibility';
+
+//BASE
+@import '../../libs/bootstrap/scss/bootstrap-grid';
+@import '../../libs/bootstrap/scss/bootstrap-reboot';
+
+//COMPONENTS
+@import '../../libs/bootstrap/scss/breadcrumb';
+@import '../../libs/bootstrap/scss/dropdown';
+@import '../../libs/bootstrap/scss/nav';
+@import '../../libs/bootstrap/scss/popover';
+@import '../../libs/bootstrap/scss/tables';
+

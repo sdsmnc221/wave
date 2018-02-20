@@ -1,0 +1,31 @@
+.main {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    padding: 0 30px !important;
+    transition: all cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.5s;
+
+    .breadcrumb {
+        .controller__stats {
+            display: inline-block !important;
+    
+            .dropdown-toggle {
+                padding: 0 !important;
+                margin: 0 0 0 -5px !important;
+                border: none !important;
+                background-color: transparent !important;
+            }
+    
+            .dropdown-menu {
+                top: 5px !important;
+                left: -16px !important;
+            }
+        }
+    }
+
+    @import 'header';
+    @import 'content';
+}

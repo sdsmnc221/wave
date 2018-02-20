@@ -1,0 +1,152 @@
+.content {
+    padding: 10px 0;
+    text-align: justify !important;
+    .row {
+        margin: 10px 0;
+    }
+
+    .card {
+        margin-bottom: 20px;
+        margin-top: 10px;
+        padding: 10px 20px;
+        background-color:  $custom-white;
+        
+        header h2 {
+            padding-bottom: 5px;
+            margin-bottom: 5px;
+            border-bottom: thin solid $custom-darkblue;
+        }
+
+        .card__carousel {
+            margin: 0 !important;
+            padding: 50px !important;
+            height: 100%;
+
+            img {
+                display: block;
+                width: 80%;
+            }
+        }
+
+        &.card--contact {
+            background-color: transparent;
+            padding: 0;
+            .card__infobox {
+                padding: 20px;
+                border-bottom-width: 1.5px;
+                border-top-width: 30px;
+                h2 {
+                    margin: 10px 0;
+                    font-family: $custom-quicksand;
+                    font-weight: $custom-medium;
+                    font-size: $custom-base-font-size*1.5;
+                    color: $custom-blue;
+                }
+                p {
+                    margin-left: 5px;
+                    color: $custom-black;
+                    font-size: $custom-base-font-size*1.1;
+                    font-weight: $custom-regular;
+                    letter-spacing: $custom-letter-spacing*1.5;
+                }
+            }
+        }
+
+        .card__infobox {
+            padding: 10px;
+            border-radius: 15px;
+            border: 1.5px solid $custom-blue;
+            border-bottom-width: 10px;
+            background-color: $custom-white;
+            
+            h3 {
+                font-size: $custom-base-font-size*0.9;
+                font-weight: $custom-regular;
+                letter-spacing: $custom-letter-spacing*1.5;
+            }
+
+            p {
+                margin: 0;
+                padding: 0;
+                font-family: $custom-quicksand;
+                font-weight: $custom-medium;
+                font-size: $custom-base-font-size*2;
+                color: $custom-blue;
+            }
+
+            .unit {
+                font-size: $custom-base-font-size*1.3;
+            }
+
+            .degree-divider {
+                font-family: $custom-lato;
+                font-weight: $custom-light;
+                font-size: $custom-base-font-size*2.2;
+                color: $custom-darkblue;
+            }
+
+            .card__infobox__divider {
+                width: 1px;
+                height: 100%;
+                background-color: $custom-lightblue;
+            }
+        }
+
+        .card__infobox--danger {
+            border-color: $custom-red;
+
+            .card__infobox__divider {
+                background-color: $custom-lightred;
+            }
+
+            p {
+                color: $custom-red;
+            }
+        }
+
+        .card__graph {
+            #graph {
+                display: block;
+                margin: 10px 0 20px 0;
+                width: 100%;
+                height: 100%;
+            }
+        }
+
+        .card__media {
+            p {
+                margin-bottom: 0;
+            }
+            img {
+                display: block;
+            }
+        }
+
+        .card__table {
+            padding: 0 20px;
+            font-size: $custom-base-font-size*0.9;
+        }
+
+        .card__text {
+        }
+    }
+
+    .card--current {
+        margin-bottom: $custom-base-font-size*50/12;
+
+        .card__infobox {
+            margin: 30px 0 !important;
+            
+            h3 {font-size: $custom-base-font-size*2 !important;}
+            p {font-size: $custom-base-font-size*2.5 !important;}
+            .card__infobox__divider {width: 2px;}
+            .unit {font-size: $custom-base-font-size*1.8 !important;}
+            .degree-divider {font-size: $custom-base-font-size*2.7 !important;}
+        }
+
+        .card__table {
+            padding: 0;
+            font-size: $custom-base-font-size;
+        }
+    }
+}

@@ -1,0 +1,32 @@
+//FONTS
+@import url('https://fonts.googleapis.com/css?family=Lato:300,400,700,900');
+@import url('https://fonts.googleapis.com/css?family=Quicksand:400,700');
+
+$custom-lato: 'Lato', sans-serif;
+$custom-quicksand: 'Quicksand', sans-serif;
+
+$custom-light: 300;
+$custom-regular: 400;
+$custom-medium: 700;
+$custom-bold: 900;
+
+$custom-letter-spacing: 0.5px;
+$custom-base-font-size: 0.9rem;
+$custom-base-line-height: 1.4;
+
+//COLORS
+$custom-blue: #4FC1FF;
+$custom-lightblue: #7BEFFF;
+$custom-darkblue: #1C9CC9;
+$custom-activeblue: #01CAFA;
+$custom-shadowblue: rgba(3, 39, 66, 0.1);
+
+$custom-black: #082833;
+$custom-white: #fff;
+$custom-lightgray: #F2F2F2;
+
+$custom-red: #D8614E;
+$custom-lightred: #FF837D;
+
+//GRADIENTS
+$custom-wave: linear-gradient(0deg, $custom-blue 0%, $custom-lightblue 100%);
