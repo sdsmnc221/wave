@@ -6,9 +6,10 @@ const cleancss = require('gulp-cleancss');
 const sass = require('gulp-sass');
 const gulp = require('gulp');
 const gutil = require('gulp-util');
+const watch = require('gulp-sane-watch');
 const minify = require('gulp-minify');
 
-const htmlIn = ['dev/*.html', 'dev/**/*.html', '!dev/libs/*.html', '!dev/libs/**/*.html'],
+const htmlIn = ['dev/**/*.html'],
       htmlOut = 'dist',
       cssIn = ['dev/styles/*.scss', 'dev/styles/**/*.scss'],
       cssOut = 'dist/styles',
@@ -16,14 +17,18 @@ const htmlIn = ['dev/*.html', 'dev/**/*.html', '!dev/libs/*.html', '!dev/libs/**
       cssWatch = ['dev/styles/*.scss', 'dev/styles/**/*.scss', 'dev/libs/*.scss', 'dev/libs/**/*.scss'],
       jsIn = ['dev/scripts/*.js', 'dev/scripts/**/*.js'],
       jsOut = 'dist/scripts',
-      libsIn = ['dev/libs/jquery/dist/jquery.js', 
-                'dev/libs/moment/moment.js',
-                'dev/libs/chart.js/dist/Chart.js',
-                'dev/libs/barba.js/dist/barba.js', 
-                'dev/libs/popper.js/dist/umd/popper.js', 
-                'dev/libs/bootstrap/dist/js/bootstrap.js',  
+      libsIn = ['dev/libs/jquery.min.js', 
+                'dev/libs/moment.min.js',
+                'dev/libs/Chart.min.js',
+                'dev/libs/barba.min.js', 
+                'dev/libs/popper.min.js', 
+                'dev/libs/bootstrap.min.js',  
                 ],
-      libsOut = 'dist/libs';
+      libsOut = 'dist/libs',
+      phpIn = ['dev/scripts/*.php', 'dev/scripts/**/*.php'],
+      phpOut = 'dist/scripts',
+      imgIn = ['dev/images/*.+(jpg|jpeg|gif|png|svg)', 'dev/images/**/*.+(jpg|jpeg|gif|png|svg)'],
+      imgOut = 'dist/images';
 
 //GULP UTIL - LOGGING MESSAGES
 gulp.task('log', function() {
@@ -34,6 +39,20 @@ gulp.task('log', function() {
 gulp.task('html', function() {
     gulp.src(htmlIn)
         .pipe(gulp.dest(htmlOut))
+        .pipe(connect.reload());
+});
+
+//PHP
+gulp.task('img', function() {
+    gulp.src(imgIn)
+        .pipe(gulp.dest(imgOut))
+        .pipe(connect.reload());
+});
+
+//PHP
+gulp.task('php', function() {
+    gulp.src(phpIn)
+        .pipe(gulp.dest(phpOut))
         .pipe(connect.reload());
 });
 
@@ -87,10 +106,22 @@ gulp.task('live', function() {
 
 //WATCH FOR CHANGES
 gulp.task('watch', function() {
-    gulp.watch(htmlIn, ['html']);
-    gulp.watch(cssWatch, ['sass']);
-    gulp.watch(jsIn, ['babel']);
+    watch(imgIn, function() {
+        gulp.start('img');  
+    });
+    watch(phpIn, function() {
+        gulp.start('php');  
+    });
+    watch(htmlIn, function() {
+        gulp.start('html');  
+    });
+    watch(cssWatch, function() {
+        gulp.start('sass');  
+    });
+    watch(jsIn, function() {
+        gulp.start('babel');  
+    });
 })
 
 //PUT EVERYTHING TOGETHER
-gulp.task('default', ['bundle', 'html', 'sass', 'babel', 'live', 'watch']);
+gulp.task('default', ['bundle', 'img', 'php', 'html', 'sass', 'babel', 'live', 'watch']);

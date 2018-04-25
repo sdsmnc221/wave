@@ -1,5 +1,13 @@
 $(document).ready(() => {
-
+    const _types = ['Chlore', 'OxyConcentration', 'Oxygene', 'pH', 'Pression', 'Salinite', 'TempeAir', 'TempeEau'],
+          t = {
+            EN: ['Chlorine', 'Saturation', 'Oxygene', 'pH', 'Pressure', 'Salinity', 'Air Temp.', 'Water Temp.'],
+            FR: ['Chlore', 'Saturation', 'Oxygène', 'pH', 'Pression', 'Salinité', 'Temp. d\'Air', 'Temp. d\'Eau'],
+            VI: ['Clo', 'Độ bão hoà', 'Ôxy', 'pH', 'Áp suất', 'Nồng độ muối', 'Nhiệt độ không khí', 'Nhiệt độ nước']
+          },
+          api = '../scripts/api.php';
+    let types = t[$('html').attr('lang').trim().toUpperCase()],
+        lo;
 
     /*
         PAGE LOADING, TRANSITION ETC.
@@ -7,7 +15,17 @@ $(document).ready(() => {
 
     Barba.Pjax.init();
     Barba.Prefetch.init();
-    let transition = Barba.BaseTransition.extend({
+    Barba.Pjax.originalPreventCheck = Barba.Pjax.preventCheck;
+    Barba.Pjax.preventCheck = function(evt, element) {
+        if (!Barba.Pjax.originalPreventCheck(evt, element)) {
+            return false;
+        }
+        if (/vi/.test(element.href.toLowerCase()) || /fr/.test(element.href.toLowerCase()) || /en/.test(element.href.toLowerCase())) {
+            return false;
+        }
+        return true;
+    };
+    const transition = Barba.BaseTransition.extend({
             start: function() {
                 Promise.all([this.newContainerLoading, this.fadeOut()])
                         .then(this.fadeIn.bind(this));
@@ -17,10 +35,10 @@ $(document).ready(() => {
             },
             fadeIn: function() {
                 let _this = this
-                    url = window.location.toString().slice(23);
+                    url = window.location.href.slice(23);
                 document.body.scrollTop = 0;
                 $('.nav-link-active').removeClass('nav-link-active');
-                $(`.nav-link[href="${url}"]`).addClass('nav-link-active');
+                $(`.nav-link[href='${url}']`).addClass('nav-link-active');
                 $(this.oldContainer).hide();
                 $(this.newContainer).css({visibility: 'visible', opacity: 0});
                 $(this.newContainer).animate({opacity: 1}, 'slow', function() {
@@ -29,10 +47,23 @@ $(document).ready(() => {
             }
         }),
         initPage = function() {
-            initPopover();
+            detectLang();
+            initButtons();
             initChart();
+            if (window.location.href.indexOf('contact.html') === -1 && window.location.href.indexOf('about.html') === -1) {
+                initLO();
+            }
+        },
+        detectLang = function() {
+            const lang = window.location.href;
+            return (lang.indexOf('en')) ? 'en': ((lang.indexOf('fr')) ? 'fr' : 'vi');
+        },
+        detectTypesLang = function() {
+            const lang = window.location.href;
+            types = (lang.indexOf('en')) ? t.EN : ((lang.indexOf('fr')) ? t.FR : t.VI);
         };
     Barba.Pjax.getTransition = () => {return transition};
+    Barba.Dispatcher.on('initStateChange', detectTypesLang);
     Barba.Dispatcher.on('transitionCompleted', initPage);
 
 
@@ -67,53 +98,115 @@ $(document).ready(() => {
     $('.dropdown-toggle').dropdown();
 
     //Popover
-    initPopover();
+    initButtons();
 
-    function initPopover() {
-        $('.app .controller__search').popover({
-            container: '.header',
-            content: () => {
-                return `<form class="search" action="#" method="get">
-                            <label for="search">
-                                <input type="search" name="search" id="search-input" placeholder="Search..." autofocus>
-                            </label>
-                            <input type="submit" name="submit" value="OK">
-                        </form>`;
-            },
-            html: true,
-            placement: 'bottom',
-            trigger: 'click'
+    function initButtons() {
+        $('.app .controller__refresh').on('click', (e) => {
+            initLO();
         });
-    
-        $('.app .controller__settings').popover({
-            container: '.header',
-            content: () => {
-                return `<ul class="settings">
-                            <li><button type="button">Toggle sidebar</button></li>
-                            <div class="dropdown-divider"></div>
-                            <li><button type="button">Sign in</button></li>
-                        </ul>`;
-            },
-            html: true,
-            placement: 'bottom',
-            trigger: 'focus'
+        
+        $('.card__infobox').each((index, node) => {
+            const type = $(node).find('h3').text().trim();
+            if (type.indexOf('Temp') !== -1 || type.indexOf('Nhiệt độ') !== -1) {
+                $(node).attr('title', 'Conversion Celsius <-> Farenheit')
+                    .css('cursor', 'pointer')
+                    .on('click', (e) => {
+                        let p = $(e.currentTarget).find('p'),
+                            degree = parseFloat(p.text().trim());
+                        if (p.text().indexOf('°C') !== -1) {
+                            p.html(`${(degree * 1.8 + 32).toFixed(2)}<span class="unit">°F</span`);
+                        } else {
+                            p.html(`${((degree -32)/1.8).toFixed(2)}<span class="unit">°C</span`);
+                        }
+                    });
+            };
         });
     }
 
+    /*
+        LIVE OVERVIEW
+    */
+   if (window.location.href.indexOf('contact.html') === -1 && window.location.href.indexOf('about.html') === -1) {
+        initLO();
+    }
+
+   function initLO() {
+        if (window.location.href.indexOf('details.html') !== -1) {
+            const subject = $('.controller__stats .dropdown-toggle').text().trim();
+            $.ajax({
+                url: api,
+                dataType: 'json',
+                data: {read_all: _types[types.findIndex(e => e === subject)]}
+            }).done(data => {
+                //console.log('ok');
+                let value = data[0].Valeurs.toFixed(2),
+                    lang = detectLang();
+                    graphName = (lang === 'en') ? `<h2>${subject}'s Graph</h2>` : ((lang === 'fr') ? `<h2>Graphe : ${subject}</h2>`: `<h2>Biểu đồ ${subject}</h2>`);
+                $('.card--current .card__infobox p').html((subject.indexOf('Temp') !== -1 || subject.indexOf('Nhiệt độ') !== -1) ? `${value}<span class="unit">°C</span` : ((subject.indexOf('Press') !== -1 || subject.indexOf('Áp suất') !== -1) ? `${value}<span class="unit">pHa</span` : value));
+                $('.card--current .card__infobox h3').text(subject.toUpperCase());
+                $($('.card__graph').siblings()[0]).html(graphName);
+                initChart();
+                drawTable(data);
+            });
+        } else {
+            $.ajax({
+                url: api,
+                dataType: 'json',
+                data: {read_lo: true}
+            }).done(data => {
+                //console.log('ok');
+                $('.card__infobox').each((index, node) => {
+                    const type = $(node).find('h3').text().trim(),
+                        value = data.find(e => e.type === _types[types.findIndex(_e => _e === type)]).Valeurs.toFixed(2);
+                    $(node).find('p').html((type.indexOf('Temp') !== -1) ? `${value}<span class="unit">°C</span` : (type.indexOf('Press') !== -1 ? `${value}<span class="unit">pHa</span` : value));
+                    initChart();
+                    drawTable(data.slice(0, 7));
+                })
+            });
+        }
+        lo = setTimeout(() => {
+            initLO();
+        }, 1000*10);
+   }
+
+   function destroyLO() {
+       clearTimeout(lo);
+   }
 
     /*
         CHART
     */   
 
     $('.app').on('click', '.controller__stats button.dropdown-item', function() {
-        let subject = $(this).text().trim();
+        const subject = $(this).text().trim();
         //Update current active breadcrumb/dropdown-toggle
         $('.controller__stats .dropdown-toggle').text(subject);
+        $('.controller__stats .dropdown-menu .dropdown-item').each((index, node) =>  {
+            $(node).removeClass('active');
+            if ($(node).text() === subject) $(node).addClass('active');
+        });
+        if (subject.indexOf('Temp') !== -1 || subject.indexOf('Nhiệt độ') !== -1) {
+            $('.card__infobox').attr('title', 'Conversion Celsius <-> Farenheit')
+                .css('cursor', 'pointer')
+                .on('click', (e) => {
+                    let p = $(e.currentTarget).find('p'),
+                        degree = parseFloat(p.text().trim());
+                    if (p.text().indexOf('°C') !== -1) {
+                        p.html(`${(degree * 1.8 + 32).toFixed(2)}<span class="unit">°F</span`);
+                    } else {
+                        p.html(`${((degree -32)/1.8).toFixed(2)}<span class="unit">°C</span`);
+                    }
+                });
+        } else {
+            $('.card__infobox').removeAttr('title')
+                .css('cursor', 'none')
+                .off('click');
+        };
         //(re)draw the chart
         drawChart(subject);
         //Data & Graphs page : Update current stat
-        if (window.location.toString().slice(23) === 'details.html') {
-            $('.card--current .card__infobox h3').text(subject.toUpperCase());
+        if (window.location.href.indexOf('details.html') !== -1) {
+            initLO();
         }
     });
     
@@ -121,37 +214,26 @@ $(document).ready(() => {
     initChart();
 
     function initChart() {
-        let url = window.location.toString().slice(23);
-        if (url === '' || url === 'index.html'|| url === 'details.html') {
-            let chart = $('.controller__stats .dropdown-toggle').text().trim();
-            drawChart(chart);
-        }
+        const chart = $('.controller__stats .dropdown-toggle').text().trim(),
+                type = $('');
+        drawChart(chart);
     }
 
     function drawChart(chart) {
-        let ctx = $('#graph'),
+        const lang = detectLang();
+        $.ajax({
+            url: api,
+            dataType: 'json',
+            data: {read_all: _types[types.findIndex(t => t === chart)]}
+        }).done(data => {
+            const _data = (window.location.href.indexOf('details.html') === -1) ? dataChart(data, 7) : dataChart(data, data.length),
+            ctx = $('#graph'),
             config = {
                 type: 'line',
-                labels: [
-                    date('2018/02/13'),
-                    date('2018/02/14'),
-                    date('2018/02/15'),
-                    date('2018/02/16'),
-                    date('2018/02/17'),
-                    date('2018/02/18'),
-                    date('2018/02/19'),
-                ],
+                labels: _data.map(e => e.x), //time
                 data: {
                     datasets: [{ 
-                        data: [
-                                {x: date('2018/02/13'), y: 45.10}, 
-                                {x: date('2018/02/14'), y: 45.95}, 
-                                {x: date('2018/02/15'), y: 45.56}, 
-                                {x: date('2018/02/16'), y: 48.00}, 
-                                {x: date('2018/02/17'), y: 45.00}, 
-                                {x: date('2018/02/18'), y: 49.97}, 
-                                {x: date('2018/02/19'), y: 50.00}
-                            ],
+                        data: _data,
                         label: chart,
                         borderColor: '#03A9F4',
                         fill: false
@@ -160,7 +242,7 @@ $(document).ready(() => {
                 options: {
                     title: {
                         display: true,
-                        text: `Last 7 days ${chart} stats`
+                        text: (lang === 'en') ? `Last 7 ${chart} stats` : ((lang === 'fr') ? `${chart} - Les 7 dernières valeurs` : `7 giá trị cuối cùng của ${chart}`)
                     },
                     scales: {
                         xAxes: [{
@@ -189,13 +271,38 @@ $(document).ready(() => {
                     }
                 }
             }; 
-            
+
             return new Chart(ctx, config);
-
-        //Chart helper functions
-        function date(dateString) {
-			return moment(dateString, 'YYYY/MM/DD').toDate();
-        }
-
+        });
     }
+
+    //Table
+    function drawTable(data) {
+        let template = '';
+        data.forEach((e, i) => {
+            template += `<tr>
+                <th scope="row"> ${(window.location.href.indexOf('detail.html') !== -1) ? e.ID : i+1} </th>
+                <td> ${e.Valeurs} </td>
+                <td> ${date(e.time)} </td>
+            </tr>`;
+        });
+        $('#table tbody').html(template);
+        $('#table').parent().scrollTop(0);
+    }
+
+    //Chart helper functions
+    function dataChart(data, max) {
+        const _data = data.slice(0, max).map(e => {
+            return {
+                x: date(e.time), //time
+                y: e.Valeurs //value
+            }
+        });
+        return _data;
+    }
+
+    function date(dateString) {
+        return moment(dateString, 'YYYY/MM/DD HH:mm').toDate();
+    }
+
 });

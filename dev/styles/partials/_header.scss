@@ -47,8 +47,7 @@
           }
 
         $controller-button-size: 40px;
-        .controller__search,
-        .controller__settings {
+        .controller__refresh {
             display: inline-block;
             width: $controller-button-size;
             height: $controller-button-size;
