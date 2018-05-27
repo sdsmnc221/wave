@@ -5,9 +5,11 @@ $(document).ready(() => {
             FR: ['Chlore', 'Saturation', 'Oxygène', 'pH', 'Pression', 'Salinité', 'Temp. d\'Air', 'Temp. d\'Eau'],
             VI: ['Clo', 'Độ bão hoà', 'Ôxy', 'pH', 'Áp suất', 'Nồng độ muối', 'Nhiệt độ không khí', 'Nhiệt độ nước']
           },
-          api = '../scripts/api.php';
+          api = '../scripts/api.php',
+          loInterval = 1000*30; //every 30s
     let types = t[$('html').attr('lang').trim().toUpperCase()],
-        lo;
+        lo,
+        _chart;
 
     /*
         PAGE LOADING, TRANSITION ETC.
@@ -56,11 +58,11 @@ $(document).ready(() => {
         },
         detectLang = function() {
             const lang = window.location.href;
-            return (lang.indexOf('en')) ? 'en': ((lang.indexOf('fr')) ? 'fr' : 'vi');
+            return (lang.indexOf('en') !== -1) ? 'en' : ((lang.indexOf('fr') !== -1) ? 'fr' : 'vi');
         },
         detectTypesLang = function() {
             const lang = window.location.href;
-            types = (lang.indexOf('en')) ? t.EN : ((lang.indexOf('fr')) ? t.FR : t.VI);
+            types = (lang.indexOf('en') !== -1) ? t.EN : ((lang.indexOf('fr') !== -1) ? t.FR : t.VI);
         };
     Barba.Pjax.getTransition = () => {return transition};
     Barba.Dispatcher.on('initStateChange', detectTypesLang);
@@ -99,27 +101,37 @@ $(document).ready(() => {
 
     //Popover
     initButtons();
+    tempConvert();
 
     function initButtons() {
         $('.app .controller__refresh').on('click', (e) => {
             initLO();
         });
-        
-        $('.card__infobox').each((index, node) => {
-            const type = $(node).find('h3').text().trim();
+    }
+
+    function tempConvert() {
+        $('.card__infobox--temp').each((index, node) => {
+            const type = (window.location.href.indexOf('details.html') === -1) ? $(node).find('h3').first().text().trim() : $('.controller__stats .dropdown-item.active').text().trim();
+            // console.log(type);
             if (type.indexOf('Temp') !== -1 || type.indexOf('Nhiệt độ') !== -1) {
-                $(node).attr('title', 'Conversion Celsius <-> Farenheit')
+                $(node).attr('title', `${type.indexOf('Temp') !== -1 ? 'Conversion Celsius <-> Farenheit' : 'Đổi Celsius <-> Farenheit'}`)
                     .css('cursor', 'pointer')
                     .on('click', (e) => {
-                        let p = $(e.currentTarget).find('p'),
+                        let p = $(e.currentTarget).find('p').first(),
                             degree = parseFloat(p.text().trim());
                         if (p.text().indexOf('°C') !== -1) {
-                            p.html(`${(degree * 1.8 + 32).toFixed(2)}<span class="unit">°F</span`);
+                            p.html(`${(degree * 1.8 + 32).toFixed(2)}<span class='unit'>°F</span`);
                         } else {
-                            p.html(`${((degree -32)/1.8).toFixed(2)}<span class="unit">°C</span`);
+                            p.html(`${((degree -32)/1.8).toFixed(2)}<span class='unit'>°C</span`);
                         }
                     });
             };
+        });
+    }
+
+    function destroyTempConvert() {
+        $('.card__infobox--temp').each((index, node) => {
+            $(node).removeAttr('type').css('cursor', 'default').off('click').removeClass('card__infobox--temp');
         });
     }
 
@@ -131,6 +143,9 @@ $(document).ready(() => {
     }
 
    function initLO() {
+        $('.alert').remove();
+        $('.dim').remove();
+        $('.content').children().removeClass('blurred');
         if (window.location.href.indexOf('details.html') !== -1) {
             const subject = $('.controller__stats .dropdown-toggle').text().trim();
             $.ajax({
@@ -142,11 +157,13 @@ $(document).ready(() => {
                 let value = data[0].Valeurs.toFixed(2),
                     lang = detectLang();
                     graphName = (lang === 'en') ? `<h2>${subject}'s Graph</h2>` : ((lang === 'fr') ? `<h2>Graphe : ${subject}</h2>`: `<h2>Biểu đồ ${subject}</h2>`);
-                $('.card--current .card__infobox p').html((subject.indexOf('Temp') !== -1 || subject.indexOf('Nhiệt độ') !== -1) ? `${value}<span class="unit">°C</span` : ((subject.indexOf('Press') !== -1 || subject.indexOf('Áp suất') !== -1) ? `${value}<span class="unit">pHa</span` : value));
+                $('.card--current .card__infobox p').html((subject.indexOf('Temp') !== -1 || subject.indexOf('Nhiệt độ') !== -1) ? `${value}<span class='unit'>°C</span` : ((subject.indexOf('Press') !== -1 || subject.indexOf('Áp suất') !== -1) ? `${value}<span class='unit'>pHa</span` : value));
                 $('.card--current .card__infobox h3').text(subject.toUpperCase());
                 $($('.card__graph').siblings()[0]).html(graphName);
                 initChart();
-                drawTable(data);
+                // drawTable(data);
+            }).fail(err => {
+                onNoData();
             });
         } else {
             $.ajax({
@@ -154,19 +171,20 @@ $(document).ready(() => {
                 dataType: 'json',
                 data: {read_lo: true}
             }).done(data => {
-                //console.log('ok');
-                $('.card__infobox').each((index, node) => {
+                $('.card__infobox--temp').each((index, node) => {
                     const type = $(node).find('h3').text().trim(),
                         value = data.find(e => e.type === _types[types.findIndex(_e => _e === type)]).Valeurs.toFixed(2);
-                    $(node).find('p').html((type.indexOf('Temp') !== -1) ? `${value}<span class="unit">°C</span` : (type.indexOf('Press') !== -1 ? `${value}<span class="unit">pHa</span` : value));
+                    $(node).find('p').html((type.indexOf('Temp') !== -1 || type.indexOf('Nhiệt độ') !== -1) ? `${value}<span class='unit'>°C</span` : (type.indexOf('Press') !== -1 ? `${value}<span class='unit'>pHa</span` : value));
                     initChart();
-                    drawTable(data.slice(0, 7));
+                    // drawTable(data.slice(0, 7));
                 })
+            }).fail(err => {
+                onNoData();
             });
         }
         lo = setTimeout(() => {
             initLO();
-        }, 1000*10);
+        }, loInterval); 
    }
 
    function destroyLO() {
@@ -185,28 +203,18 @@ $(document).ready(() => {
             $(node).removeClass('active');
             if ($(node).text() === subject) $(node).addClass('active');
         });
-        if (subject.indexOf('Temp') !== -1 || subject.indexOf('Nhiệt độ') !== -1) {
-            $('.card__infobox').attr('title', 'Conversion Celsius <-> Farenheit')
-                .css('cursor', 'pointer')
-                .on('click', (e) => {
-                    let p = $(e.currentTarget).find('p'),
-                        degree = parseFloat(p.text().trim());
-                    if (p.text().indexOf('°C') !== -1) {
-                        p.html(`${(degree * 1.8 + 32).toFixed(2)}<span class="unit">°F</span`);
-                    } else {
-                        p.html(`${((degree -32)/1.8).toFixed(2)}<span class="unit">°C</span`);
-                    }
-                });
-        } else {
-            $('.card__infobox').removeAttr('title')
-                .css('cursor', 'none')
-                .off('click');
-        };
         //(re)draw the chart
-        drawChart(subject);
+        initChart(subject);
+        
         //Data & Graphs page : Update current stat
         if (window.location.href.indexOf('details.html') !== -1) {
             initLO();
+            if (subject.indexOf('Temp') !== -1 || subject.indexOf('Nhiệt độ') !== -1) {
+                $('.card--current-value').addClass('card__infobox--temp');
+                tempConvert();
+            } else {
+                destroyTempConvert();
+            }
         }
     });
     
@@ -216,7 +224,25 @@ $(document).ready(() => {
     function initChart() {
         const chart = $('.controller__stats .dropdown-toggle').text().trim(),
                 type = $('');
+        $('canvas#graph').hide('slow').remove();
+        $('.card__graph').append('<canvas id="graph"></canvas>');
         drawChart(chart);
+    }
+
+    function onNoData() {
+        let alert = document.createElement('div'),
+            dim = document.createElement('div'),
+            lang = detectLang(),
+            text;
+        text = lang === 'en' ? 'No data. Refresh the page or check database connection.'
+             : lang === 'fr' ? 'Aucune donnée. Rechargez la page ou vérifiez la connexion vers la BDD.'
+             : 'Không có dữ liệu. Tải lại trang hoặc kiểm tra kết nối với CSDL.';
+        $('.content').children().addClass('blurred');
+        $(dim).addClass('dimmed').appendTo($('.content')); 
+        $(alert).addClass('alert alert-danger')
+                .attr('role', 'alert')
+                .html(text)
+                .appendTo($('.content'));
     }
 
     function drawChart(chart) {
@@ -226,6 +252,13 @@ $(document).ready(() => {
             dataType: 'json',
             data: {read_all: _types[types.findIndex(t => t === chart)]}
         }).done(data => {
+
+            if (window.location.href.indexOf('details.html') === -1) {
+                drawTable(data.slice(0, 7));
+            } else {
+                drawTable(data);
+            }
+
             const _data = (window.location.href.indexOf('details.html') === -1) ? dataChart(data, 7) : dataChart(data, data.length),
             ctx = $('#graph'),
             config = {
@@ -263,15 +296,15 @@ $(document).ready(() => {
                                 labelString: 'Value'
                             },
                             ticks: {
-                                stepSize: 10,
+                                stepSize: roundToNearestMultipleOf(_data.map(e => e.y).sort().reverse()[0])/10,
                                 min: 0,
-                                max: 100
+                                max: roundToNearestMultipleOf(_data.map(e => e.y).sort().reverse()[0])
                             }
                         }]
                     }
                 }
             }; 
-
+            
             return new Chart(ctx, config);
         });
     }
@@ -281,7 +314,7 @@ $(document).ready(() => {
         let template = '';
         data.forEach((e, i) => {
             template += `<tr>
-                <th scope="row"> ${(window.location.href.indexOf('detail.html') !== -1) ? e.ID : i+1} </th>
+                <th scope='row'> ${(window.location.href.indexOf('detail.html') !== -1) ? e.ID : i+1} </th>
                 <td> ${e.Valeurs} </td>
                 <td> ${date(e.time)} </td>
             </tr>`;
@@ -303,6 +336,10 @@ $(document).ready(() => {
 
     function date(dateString) {
         return moment(dateString, 'YYYY/MM/DD HH:mm').toDate();
+    }
+
+    function roundToNearestMultipleOf(x, of = 100) {
+        return Math.ceil(x/of)*of;
     }
 
 });
