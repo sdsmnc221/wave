@@ -167,17 +167,17 @@ $(document).ready(function () {
                 dataType: 'json',
                 data: { read_lo: true }
             }).done(function (data) {
-                $('.card__infobox--temp').each(function (index, node) {
+                $('.card__infobox').each(function (index, node) {
                     var type = $(node).find('h3').text().trim(),
                         value = data.find(function (e) {
                         return e.type === _types[types.findIndex(function (_e) {
                             return _e === type;
                         })];
                     }).Valeurs.toFixed(2);
-                    $(node).find('p').html(type.indexOf('Temp') !== -1 || type.indexOf('Nhiệt độ') !== -1 ? value + '<span class=\'unit\'>\xB0C</span' : type.indexOf('Press') !== -1 ? value + '<span class=\'unit\'>pHa</span' : value);
-                    initChart();
-                    // drawTable(data.slice(0, 7));
+                    $(node).find('p').html(type.indexOf('Temp') !== -1 || type.indexOf('Nhiệt độ') !== -1 ? value + '<span class=\'unit\'>\xB0C</span' : type.indexOf('Press') !== -1 || type.indexOf('Áp suất') !== -1 ? value + '<span class=\'unit\'>pHa</span' : value);
                 });
+                initChart();
+                // drawTable(data.slice(0, 7));
             }).fail(function (err) {
                 onNoData();
             });
