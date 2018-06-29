@@ -10,7 +10,7 @@ class APICore {
 
     public function __construct(
         string $queries,
-        string $api_url = "http://localhost:8888/wave/dist/api.php") {
+        string $api_url = "path/to/api.php") {
         $this->_api_url = $api_url;
         $this->_db = $this->make_db(); 
         $this->_queries = $this->make_queries($queries);
