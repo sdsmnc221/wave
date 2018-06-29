@@ -171,13 +171,13 @@ $(document).ready(() => {
                 dataType: 'json',
                 data: {read_lo: true}
             }).done(data => {
-                $('.card__infobox--temp').each((index, node) => {
+                $('.card__infobox').each((index, node) => {
                     const type = $(node).find('h3').text().trim(),
                         value = data.find(e => e.type === _types[types.findIndex(_e => _e === type)]).Valeurs.toFixed(2);
-                    $(node).find('p').html((type.indexOf('Temp') !== -1 || type.indexOf('Nhiệt độ') !== -1) ? `${value}<span class='unit'>°C</span` : (type.indexOf('Press') !== -1 ? `${value}<span class='unit'>pHa</span` : value));
-                    initChart();
-                    // drawTable(data.slice(0, 7));
-                })
+                    $(node).find('p').html((type.indexOf('Temp') !== -1 || type.indexOf('Nhiệt độ') !== -1) ? `${value}<span class='unit'>°C</span` : ((type.indexOf('Press') !== -1 || type.indexOf('Áp suất') !== -1) ? `${value}<span class='unit'>pHa</span` : value));
+                });
+                initChart();
+                // drawTable(data.slice(0, 7));
             }).fail(err => {
                 onNoData();
             });

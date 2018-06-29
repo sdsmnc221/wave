@@ -32,6 +32,9 @@ if ($api->get_db() instanceof PDO && sizeof($queries) > 0) {
     if (array_key_exists("read_lo", $queries)) {
         echo $api->read_lo();
     }
+    if (array_key_exists("create_data", $queries)) {
+        echo $api->create_data();
+    }
     $api->destroy_db();
 }
 
