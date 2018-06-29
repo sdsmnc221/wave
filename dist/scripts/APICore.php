@@ -21,11 +21,11 @@ class APICore {
     public function make_db() {
         header("Access-Control-Allow-Origin: *");
         global $pdo;
-        $host = "127.0.0.1";//"mysql.hostinger.fr";
-        $port = "8889"; //""; 
-        $db   = "TempEau"; //"850201821_wave"; 
-        $user = "root"; //"u850201821_Awave"; //
-        $pass = "root"; //"wave2018"; 
+        $host = "****";
+        $port = "****";
+        $db   = "****";
+        $user = "****";
+        $pass = "****";
         $charset = "utf8mb4";
         $dsn = "mysql:host=" .$host. ";port=" .$port. ";dbname=" .$db. ";charset=" .$charset;
         $opt = [
