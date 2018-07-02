@@ -31,6 +31,13 @@
         margin: 10px 0;
     }
 
+    .badge {
+        margin-left: 20px;
+        text-transform: uppercase;
+        font-size: $custom-base-font-size;
+        transform: translateY(-2px);
+    }
+
     .card {
         margin-bottom: 20px;
         margin-top: 10px;
@@ -45,7 +52,7 @@
 
         .card__carousel {
             margin: 0 !important;
-            padding: 50px !important;
+            padding: 23px !important;
             height: 100%;
 
             img {
@@ -61,19 +68,31 @@
                 padding: 20px;
                 border-bottom-width: 1.5px;
                 border-top-width: 30px;
+                header {
+                    margin: -20px 0 20px 0;
+                }
                 h2 {
                     margin: 10px 0;
                     font-family: $custom-quicksand;
                     font-weight: $custom-medium;
                     font-size: $custom-base-font-size*1.5;
                     color: $custom-blue;
+                    text-align: center;
                 }
                 p {
                     margin-left: 5px;
+                    margin-bottom: 10px;
+                    text-align: center;
                     color: $custom-black;
-                    font-size: $custom-base-font-size*1.1;
+                    font-size: $custom-base-font-size*1.4;
                     font-weight: $custom-regular;
-                    letter-spacing: $custom-letter-spacing*1.5;
+                    letter-spacing: $custom-letter-spacing*1.6;
+                    strong {
+                        color: $custom-darkblue;
+                        display: inline-block;
+                        width: 100%;
+                        text-align: left;
+                    }
                 }
             }
         }
@@ -84,6 +103,9 @@
             border: 1.5px solid $custom-blue;
             border-bottom-width: 10px;
             background-color: $custom-white;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
             
             h3 {
                 font-size: $custom-base-font-size*0.9;
@@ -178,5 +200,24 @@
             max-height: 80vh;
             overflow-y: scroll;
         }
+    }
+
+    .vertical-align {
+        display: flex;
+        align-items: center;
+    }
+
+    .controller__temp {
+        padding-left: 10px;
+        padding-right: 10px;
+        &:last-child {
+            margin-left: 5px;
+        }
+    }
+}
+
+@media (max-width: 425px) {
+    .card__infobox:first-child {
+        margin-bottom: 15px;
     }
 }

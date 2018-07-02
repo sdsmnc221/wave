@@ -74,23 +74,39 @@ $(document).ready(() => {
     */
 
     //Unpin menu
-    $('.app').on('click', '.menu .controller__sidebar', () => {
+    $('.app').on('click', '.menu .controller__sidebar', unpinMenu);
+
+    //Pin menu
+    $('.app').on('click', '.header .controller__sidebar', pinMenu);
+
+    //Responsive
+    if ($(window).width() <= 425) unpinMenu()
+    else pinMenu();
+
+    $(window).on('resize', () => {
+        if ($(window).width() <= 425) unpinMenu();
+        else pinMenu();
+    });
+
+    //Functions
+    function unpinMenu() {
         $('.menu')
             .css('transform', 'translateX(-110%)')
             .removeClass('col-12 col-md-3 col-lg-2');
         $('#barba-wrapper').removeClass('col-md-9 col-lg-10');
         $('.header nav').css('margin-left', '65px');
         $('.header .controller__sidebar').removeClass('invisible');        
-    });
-    //Pin menu
-    $('.app').on('click', '.header .controller__sidebar', () => {
+    }
+
+    function pinMenu() {
         $('.menu')
             .addClass('col-12 col-md-3 col-lg-2')
             .css('transform', 'translateX(0%)');       
         $('#barba-wrapper').addClass('col-md-9 col-lg-10');
         $('.header nav').css('margin-left', '0');
         $('.header .controller__sidebar').addClass('invisible');
-    });
+    }
+
 
     /*
         INIT BOOTSTRAP ELEMENTS
@@ -103,6 +119,7 @@ $(document).ready(() => {
     initButtons();
     tempConvert();
 
+    //Functions
     function initButtons() {
         $('.app .controller__refresh').on('click', (e) => {
             initLO();
@@ -138,7 +155,7 @@ $(document).ready(() => {
     /*
         LIVE OVERVIEW
     */
-   if (window.location.href.indexOf('contact.html') === -1 && window.location.href.indexOf('about.html') === -1) {
+    if (window.location.href.indexOf('contact.html') === -1 && window.location.href.indexOf('about.html') === -1) {
         initLO();
     }
 

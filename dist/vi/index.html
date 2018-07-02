@@ -87,14 +87,18 @@
   
               <div class="controller d-flex justify-content-center align-items-center">
                   <button type="button" class="controller__sidebar invisible" title="Hiện thanh sidebar"></button>
-                  <button type="button" class="controller__refresh d-flex justify-content-center align-items-center"><img src="../images/settings.svg" alt="Tải lại"></button>
+                  <button type="button" class="controller__refresh d-flex justify-content-center align-items-center" title="Tải lại"><img src="../images/settings.svg" alt="Tải lại"></button>
               </div>
             </header>
   
             <section class="content row">
               <section class="card col-12">
                 <header class="row">
-                  <h2 class="col-12">Tóm Tắt Dữ Liệu</h2>
+                  <h2 class="col-12">
+                    <span>Tóm Tắt Dữ Liệu</span>
+                    <button class="badge badge-info controller__temp">°C</button>
+                    <button class="badge badge-light controller__temp">°F</button>
+                  </h2>
                 </header>
   
                 <div class="row">
@@ -104,7 +108,7 @@
                                 <h3>Ôxy</h3>
                                 <p>50.00</p>
                             </section>
-                            <section class="card__infobox col-12 col-md-6 col-lg-5 offset-1 d-flex justify-content-between align-items-center">
+                            <section class="card__infobox col-12 col-md-6 col-lg-5 offset-md-1 d-flex justify-content-between align-items-center">
                                 <h3>Áp suất</h3>
                                 <p>150<span class="unit">pHa</span></p>
                             </section>
@@ -115,7 +119,7 @@
                                 <h3>Clo</h3>
                                 <p>78.09</p>
                             </section>
-                            <section class="card__infobox col-12 col-md-6 col-lg-5 offset-1 d-flex justify-content-between align-items-center">
+                            <section class="card__infobox col-12 col-md-6 col-lg-5 offset-md-1 d-flex justify-content-between align-items-center">
                                 <h3>Độ bão hoà</h3>
                                 <p>54.04</p>
                             </section>
@@ -128,7 +132,7 @@
                                 <h3>Nồng độ muối</h3>
                                 <p>30.59</p>
                             </section>
-                            <section class="card__infobox card__infobox--temp col-12 col-md-6 d-flex offset-1  justify-content-between align-items-center">
+                            <section class="card__infobox card__infobox--temp col-12 col-md-6 d-flex offset-md-1  justify-content-between align-items-center">
                                 <h3>Nhiệt độ nước</h3>
                                 <p>20<span class="unit">°C</span></p>
                             </section>
@@ -139,7 +143,7 @@
                                 <h3>pH</h3>
                                 <p>8.0</p>
                             </section>
-                            <section class="card__infobox card__infobox--temp col-12 col-md-6 offset-1 d-flex justify-content-between align-items-center">
+                            <section class="card__infobox card__infobox--temp col-12 col-md-6 offset-md-1 d-flex justify-content-between align-items-center">
                                 <h3>Nhiệt độ không khí</h3>
                                 <p>20<span class="unit">°C</span></p>
                             </section>
@@ -160,6 +164,7 @@
                                             <button type="button" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                               Ôxy
                                             </button>
+                                            <a href="details.html" class="badge badge-info controller__details">Chi tiết</a>
                                             <div class="dropdown-menu">
                                                 <button type="button" class="dropdown-item active">Ôxy</button>
                                                 <div class="dropdown-divider"></div>
