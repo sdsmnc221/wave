@@ -1,5 +1,5 @@
 <?php 
-include "./Helper.php";
+include "/api/Helper.php";
 
 class APICore {
     protected $_api_url;

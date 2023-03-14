@@ -1,5 +1,5 @@
 <?php
-    include "./Helper.php";
+    include "/api/Helper.php";
     header("Access-Control-Allow-Origin: *");
     global $pdo;
     $host = "localhost";

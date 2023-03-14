@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 }
 
 //MAIN
-include './APICore.php';
+include '/api/APICore.php';
 
 $api = new APICore($_SERVER["QUERY_STRING"]);
 $queries = $api->get_queries();
